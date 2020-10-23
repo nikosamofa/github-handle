@@ -8,9 +8,8 @@ function watchForm() {
         event.preventDefault();
         let candidate = $('#handle').val();
         getRepos(candidate);
-        // console.log(candidate)
-    });
     
+    });
 };
 
 
@@ -18,8 +17,8 @@ function getRepos(candidate) {
     const url = `https://api.github.com/users/${candidate}/repos`;
     fetch(url)
         .then(response => {
-            if(response.ok){
-                return response.json()                
+            if (response.ok) {
+                return response.json()
             }
             throw new Error(response.statusText)
         })
@@ -32,15 +31,15 @@ function showResults(responseJson) {
     $('#result-list').empty();
 
     for (let i = 0; i < responseJson.length; i++) {
-          
-        $('ul').html(
+        let link = decodeURIComponent(`${responseJson[i].html_url}`)
+        $('ul').append(
             `<li>
             <h3>Repo title: "${responseJson[i].name}"</h3>
-            <p>url : "${responseJson[i].repos_url}"</p>
+            <p>url : "${link}"</p>
             </li>`)
     };
-    $('#results').removeAttr('hidden');
-    
+    $('.results').removeAttr('hidden');
+
 };
 
 function all() {
