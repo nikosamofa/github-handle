@@ -2,45 +2,49 @@
 'use strict';
 
 
-//this function fetches three dog photos when called 
+
 function watchForm() {
-    $('.js-dog-form').submit(event => {
+    $('#github-form').submit(event => {
         event.preventDefault();
-
-        //this is the user input
-        let submissions = $('.number-of-dogs').val();
-        if (submissions < 3 || submissions == '' || submissions == ' ') {
-            submissions = 3;
-        };
-
-        //this make the image section visible        
-        getTheDog(submissions)
+        let candidate = $('#handle').val();
+        getRepos(candidate);
+        // console.log(candidate)
     });
+    
 };
 
 
-function getTheDog(submissions) {
-    const url = `https://dog.ceo/api/breeds/image/random/${submissions}`;
+function getRepos(candidate) {
+    const url = `https://api.github.com/users/${candidate}/repos`;
     fetch(url)
-        .then(response => response.json())
-        .then(getDog => displayResults(getDog))
-
-        .catch(error => alert('something went wrong, please try again'));
+        .then(response => {
+            if(response.ok){
+                return response.json()                
+            }
+            throw new Error(response.statusText)
+        })
+        .then(responseJson => showResults(responseJson))
+        .catch(error => alert('Something went wrong, Please try again.'));
 };
 
 
-function displayResults(getDog) {
-    $('.dog-images').html('');
-    for (let i = 0; i < getDog.message.length; i++) {
-        $('.dog-images').append(`<li><img src="${getDog.message[i]}" alt="picutre of a Dog" class="dogimages"/></li>`);
+function showResults(responseJson) {
+    $('#result-list').empty();
+
+    for (let i = 0; i < responseJson.length; i++) {
+          
+        $('ul').html(
+            `<li>
+            <h3>Repo title: "${responseJson[i].name}"</h3>
+            <p>url : "${responseJson[i].repos_url}"</p>
+            </li>`)
     };
-    $('.hidden-div').removeAttr('hidden')
-    console.log(getDog)
+    $('#results').removeAttr('hidden');
+    
 };
-
 
 function all() {
-    console.log("The page has loaded")
+    console.log("The page has loaded");
     watchForm();
 
 };
